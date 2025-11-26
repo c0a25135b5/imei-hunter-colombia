@@ -111,6 +111,7 @@ def solve_captcha(request: SolveRequest):
     
     try:
         captcha_input = driver.find_element(By.ID, "txtInput")
+        captcha_input.clear()
         captcha_input.send_keys(text)
 
         search_button = driver.find_element(By.ID, "buscar")
@@ -129,28 +130,20 @@ def solve_captcha(request: SolveRequest):
         
         result = {}
         
-        # 判定ロジック（誤検知を防ぐため、条件を厳しくする）
-        if "no se encuentra registrado" in page_text:
-            result = {"status": "clean", "message": "✅ 安全！盗難届は出ていません。"}
-        
-        # ★修正: 判定の優先順位を変更！
-        # 1. まず「キャプチャミス」を疑う（最優先）
+        # 1. キャプチャミス（最優先）
         if "Captcha ingresado incorrecto" in page_text or "incorrecto" in page_text.lower():
-            result = {"status": "retry", "message": "⚠️ 画像の文字が違います。"}
+            result = {"status": "retry", "message": "⚠️ 画像の文字が違います。もう一度試してください。"}
         
-        # 2. 次に「安全」を確認
+        # 2. 安全（Clean）
         elif "no se encuentra registrado" in page_text:
             result = {"status": "clean", "message": "✅ 安全！盗難届は出ていません。"}
         
-        # 3. 最後に「危険」を確認（誤爆を防ぐため条件を厳しく）
-        # "se encuentra reportado" があり、かつ "no se encuentra" がない場合のみ黒とみなす
+        # 3. 危険（Stolen）
         elif "se encuentra reportado" in page_text and "no se encuentra" not in page_text:
             result = {"status": "stolen", "message": "❌ 危険！盗難届が出ています。"}
             
         else:
-            # それでもわからなければ、キャプチャミスとみなして再トライさせる方が安全
-            # result = {"status": "unknown", "message": "❓ 解析不能"} 
-            # ↓ 変更
+            # どちらでもない場合
             result = {"status": "retry", "message": "⚠️ 読み取れませんでした。もう一度試してください。"}
 
         return result
