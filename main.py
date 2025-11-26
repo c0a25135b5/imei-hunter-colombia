@@ -133,17 +133,25 @@ def solve_captcha(request: SolveRequest):
         if "no se encuentra registrado" in page_text:
             result = {"status": "clean", "message": "✅ 安全！盗難届は出ていません。"}
         
-        # ★修正: 「盗難」の判定を厳しくする
-        # 単に "reportado" があるだけでなく、否定形（no se encuentra）がないことを確認
+        # ★修正: 判定の優先順位を変更！
+        # 1. まず「キャプチャミス」を疑う（最優先）
+        if "Captcha ingresado incorrecto" in page_text or "incorrecto" in page_text.lower():
+            result = {"status": "retry", "message": "⚠️ 画像の文字が違います。"}
+        
+        # 2. 次に「安全」を確認
+        elif "no se encuentra registrado" in page_text:
+            result = {"status": "clean", "message": "✅ 安全！盗難届は出ていません。"}
+        
+        # 3. 最後に「危険」を確認（誤爆を防ぐため条件を厳しく）
+        # "se encuentra reportado" があり、かつ "no se encuentra" がない場合のみ黒とみなす
         elif "se encuentra reportado" in page_text and "no se encuentra" not in page_text:
             result = {"status": "stolen", "message": "❌ 危険！盗難届が出ています。"}
             
-        elif "Captcha ingresado incorrecto" in page_text:
-            result = {"status": "retry", "message": "⚠️ 画像の文字が違います。"}
-        
         else:
-            # どっちでもない場合（読み込み失敗など）
-            result = {"status": "unknown", "message": "❓ 解析不能（もう一度試してください）"}
+            # それでもわからなければ、キャプチャミスとみなして再トライさせる方が安全
+            # result = {"status": "unknown", "message": "❓ 解析不能"} 
+            # ↓ 変更
+            result = {"status": "retry", "message": "⚠️ 読み取れませんでした。もう一度試してください。"}
 
         return result
 

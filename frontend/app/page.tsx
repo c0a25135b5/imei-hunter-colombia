@@ -98,7 +98,7 @@ export default function Home() {
                   placeholder="例: 352012345678910" 
                   value={imei}
                   onChange={(e) => setImei(e.target.value)}
-                  style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', background: '#fafafa' }}
+                  style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', background: '#fafafa', color: '#000000', appearance: 'none'}}
                 />
               </div>
 
@@ -135,7 +135,7 @@ export default function Home() {
                 placeholder="画像に見える文字を入力" 
                 value={captchaText}
                 onChange={(e) => setCaptchaText(e.target.value)}
-                style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', textAlign: 'center' }}
+                style={{ width: '100%', padding: '15px', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', textAlign: 'center', color: '#000000', appearance: 'none'}}
               />
 
               <button 
