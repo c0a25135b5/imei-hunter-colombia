@@ -1,7 +1,6 @@
 fastapi
 uvicorn
 selenium
-webdriver-manager
 requests
 beautifulsoup4
 Pillow
