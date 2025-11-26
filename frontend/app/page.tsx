@@ -19,7 +19,7 @@ export default function Home() {
 
     setLoading(true);
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/start/${imei}`);
+      const res = await axios.get(`https://imei-backend.onrender.com/start/${imei}`);
       setCaptchaImage(res.data.captcha_image);
       setSessionId(res.data.session_id);
       setStep(2);
@@ -34,7 +34,7 @@ export default function Home() {
     if (!captchaText) return alert("文字を入力してください");
     setLoading(true);
     try {
-      const res = await axios.post(`http://127.0.0.1:8000/solve`, {
+      const res = await axios.post(`https://imei-backend.onrender.com/solve`, {
         session_id: sessionId,
         captcha_text: captchaText
       });
