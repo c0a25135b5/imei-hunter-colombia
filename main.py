@@ -9,6 +9,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from fastapi.middleware.cors import CORSMiddleware
 import re
 import uuid
+import os
 
 app = FastAPI()
 
@@ -29,15 +30,17 @@ class SolveRequest(BaseModel):
     session_id: str
     captcha_text: str
 
-# --- ブラウザ起動の最適化設定 ---
 def get_driver():
     options = webdriver.ChromeOptions()
-    options.add_argument("--headless") # ヘッドレスモード
+    options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     
-    # ★高速化: 画像の読み込みをブロック（CAPTCHA取得には影響しない範囲で）
-    # 注: サイトによってはCAPTCHAも消えることがあるので、もし画像が出なくなったらここをコメントアウト
+    # ★追加: クラウド(Render)上のChromeの場所を指定
+    chrome_binary_path = "/opt/render/project/.render/chrome/opt/google/chrome/chrome"
+    if os.path.exists(chrome_binary_path):
+        options.binary_location = chrome_binary_path
+
     prefs = {"profile.managed_default_content_settings.images": 2}
     options.add_experimental_option("prefs", prefs)
     
