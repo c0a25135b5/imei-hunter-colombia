@@ -128,6 +128,11 @@ def solve_captcha(request: SolveRequest):
         # 画面全体の文字を取得
         page_text = driver.find_element(By.TAG_NAME, "body").text
         
+        print("\n========== [DEBUG START] ==========")
+        print("ロボットが見ている画面の文字:")
+        print(page_text) # これでログに全文が出る
+        print("========== [DEBUG END] ==========\n")
+
         result = {}
         
         # 1. キャプチャミス（最優先）
