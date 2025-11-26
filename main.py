@@ -16,7 +16,11 @@ app = FastAPI()
 # CORS設定（本番では特定のドメインのみに絞るのがベスト）
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:3000",  # 自分のPCでのテスト用
+        "https://imei-hunter-colombia.vercel.app", # ★Vercelの本番URLを追加！
+        "*" # 念のためワイルドカードも残しておくが、上の明示指定が効くはず
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
